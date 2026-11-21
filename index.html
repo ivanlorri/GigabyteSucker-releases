@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GigabyteSucker — скачать</title>
+<meta name="description" content="Сжимает любое видео в MP4 меньше 100 МБ. Windows и Mac.">
+<style>
+  :root { --bg:#0f1013; --panel:#15161a; --line:#24262c; --text:#ececef; --muted:#8a8c94; --dim:#5d6068; --accent:#8094f8; --accent-h:#92a3fa; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.55 "Segoe UI", -apple-system, "SF Pro Text", system-ui, sans-serif; }
+  main { max-width:620px; margin:0 auto; padding:56px 16px 40px; }
+  .logo { font-size:22px; letter-spacing:5px; }
+  .logo b { font-weight:700; } .logo span { color:#c9cad0; }
+  .ver { color:var(--dim); font-size:13px; margin-top:6px; min-height:20px; }
+  .lead { color:var(--muted); margin:20px 0 32px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:14px; }
+  .card.mine { border-color:var(--accent); }
+  .card h2 { margin:0 0 4px; font-size:16px; }
+  .card p { margin:0 0 14px; color:var(--muted); font-size:13.5px; }
+  .btns { display:flex; flex-wrap:wrap; gap:8px; }
+  a.btn { display:inline-block; text-decoration:none; background:var(--accent); color:#0f1013; font-weight:700; padding:11px 18px; border-radius:8px; }
+  a.btn:hover { background:var(--accent-h); }
+  a.btn.alt { background:#25272e; color:var(--text); }
+  a.btn.alt:hover { background:#2c2f37; }
+  .off { opacity:.45; pointer-events:none; }
+  details { margin-top:12px; color:var(--muted); font-size:13.5px; }
+  summary { cursor:pointer; color:var(--text); }
+  details ol { padding-left:20px; margin:8px 0 0; }
+  code { background:#1d1e23; padding:1px 5px; border-radius:4px; font-size:12.5px; }
+  footer { color:var(--dim); font-size:12.5px; margin-top:28px; }
+  footer a { color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <div class="logo"><b>GIGABYTE</b><span>SUCKER</span></div>
+  <div class="ver" id="ver"></div>
+  <p class="lead">Перетащите видео в окно, нажмите «СосатьГигабайты» и получите MP4 меньше 100 МБ, до 1080p.
+    Программа обновляется сама, ставить её заново не нужно.</p>
+
+  <div class="card" id="win">
+    <h2>Windows 10 и 11</h2>
+    <p>Установщик: ярлык на рабочем столе, обновления приходят сами.</p>
+    <div class="btns">
+      <a class="btn" href="https://github.com/ivanlorri/GigabyteSucker-releases/releases/latest/download/GigabyteSucker-Setup.exe">Скачать для Windows</a>
+    </div>
+    <details><summary>Windows пишет «Система Windows защитила ваш компьютер»</summary>
+      <ol><li>Нажмите «Подробнее».</li><li>Нажмите «Выполнить в любом случае».</li></ol>
+      Так бывает с программами без платной подписи, это нужно только при первой установке.</details>
+  </div>
+
+  <div class="card" id="mac">
+    <h2>Mac</h2>
+    <p>Какой у вас чип: меню  → «Об этом Mac». Apple M1, M2, M3, M4 — первая кнопка, Intel — вторая.</p>
+    <div class="btns">
+      <a class="btn" href="https://github.com/ivanlorri/GigabyteSucker-releases/releases/latest/download/GigabyteSucker-mac-arm64.dmg">Mac на Apple M1–M4</a>
+      <a class="btn alt" href="https://github.com/ivanlorri/GigabyteSucker-releases/releases/latest/download/GigabyteSucker-mac-x64.dmg">Mac на Intel</a>
+    </div>
+    <details><summary>Как установить и открыть в первый раз</summary>
+      <ol>
+        <li>Откройте скачанный файл и перетащите GigabyteSucker в «Программы».</li>
+        <li>Откройте программу. Если macOS не даёт: «Системные настройки → Конфиденциальность и безопасность»,
+          внизу «GigabyteSucker заблокировано» → «Всё равно открыть». На старых macOS: правый клик по программе → «Открыть».</li>
+        <li>Если пишет «приложение повреждено», выполните в Терминале: <code>xattr -cr /Applications/GigabyteSucker.app</code></li>
+      </ol>
+      Когда выйдет новая версия, программа покажет «Вышла версия · Скачать».</details>
+  </div>
+
+  <footer>Все версии: <a href="https://github.com/ivanlorri/GigabyteSucker-releases/releases">список релизов</a></footer>
+</main>
+<script>
+  var isMac = /Mac/.test(navigator.platform || navigator.userAgent);
+  var mine = document.getElementById(isMac ? 'mac' : 'win');
+  mine.classList.add('mine');
+  mine.parentNode.insertBefore(mine, document.getElementById('win'));
+  fetch('https://api.github.com/repos/ivanlorri/GigabyteSucker-releases/releases/latest')
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (rel) {
+      if (!rel) return;
+      var d = new Date(rel.published_at);
+      document.getElementById('ver').textContent = 'Версия ' + rel.tag_name.replace(/^v/, '') + ' · ' + d.toLocaleDateString('ru-RU');
+      var names = (rel.assets || []).map(function (a) { return a.name; });
+      if (names.indexOf('GigabyteSucker-mac-arm64.dmg') < 0) {
+        var p = document.querySelector('#mac p');
+        p.textContent = 'Сборка для Mac для этой версии ещё не готова. Предыдущие версии — в списке релизов внизу.';
+        document.querySelectorAll('#mac a.btn').forEach(function (a) { a.classList.add('off'); });
+      }
+    }).catch(function () {});
+</script>
+</body>
+</html>
